@@ -3,54 +3,33 @@ import { ShoppingBag, TrendingUp, Package, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Home = () => {
-  const [dailySales, setDailySales] = useState<string>('₹0');
+  const [totalIncome, setTotalIncome] = useState<string>('₹0');
 
-  // Function to format and update daily sales
-  const updateDailySalesDisplay = () => {
-    const dailySalesValue = localStorage.getItem('dailySales');
-    setDailySales(dailySalesValue ? `₹${parseFloat(dailySalesValue).toFixed(2)}` : '₹0');
-  };
-
-  // Check and reset daily sales if needed (between 12 AM and 6 AM)
-  const checkAndResetDailySales = () => {
-    const now = new Date();
-    const hours = now.getHours();
-    const lastResetDate = localStorage.getItem('lastSalesResetDate');
-    
-    if ((hours >= 0 && hours < 6) && lastResetDate !== now.toDateString()) {
-      localStorage.setItem('dailySales', '0');
-      localStorage.setItem('lastSalesResetDate', now.toDateString());
-      setDailySales('₹0');
-    }
+  // Function to format and update total income
+  const updateTotalIncomeDisplay = () => {
+    const totalIncomeValue = localStorage.getItem('totalIncome') || '0';
+    setTotalIncome(`₹${parseFloat(totalIncomeValue).toFixed(2)}`);
   };
 
   useEffect(() => {
     // Initial load
-    updateDailySalesDisplay();
-    checkAndResetDailySales();
+    updateTotalIncomeDisplay();
     
     // Listen for storage events
     const handleStorageChange = () => {
-      updateDailySalesDisplay();
+      updateTotalIncomeDisplay();
     };
     
     window.addEventListener('storage', handleStorageChange);
     
-    // Check every hour if we need to reset
-    const interval = setInterval(() => {
-      checkAndResetDailySales();
-      updateDailySalesDisplay();
-    }, 60 * 60 * 1000);
-    
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      clearInterval(interval);
     };
   }, []);
 
   const stats = [
     { label: 'Total Products', value: '200+', icon: ShoppingBag, color: 'bg-blue-500' },
-    { label: 'Daily Sales', value: dailySales, icon: TrendingUp, color: 'bg-green-500' },
+    { label: 'Total Income', value: totalIncome, icon: TrendingUp, color: 'bg-green-500' },
     { label: 'Categories', value: '6', icon: Package, color: 'bg-purple-500' },
     { label: 'Customers', value: '1000+', icon: Users, color: 'bg-red-500' }
   ];
