@@ -7,4 +7,17 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
+  // Add these configurations:
+  base: './', // For proper asset paths in production
+  build: {
+    outDir: 'dist',
+    rollupOptions: {
+      input: {
+        main: './index.html'
+      }
+    }
+  },
+  server: {
+    historyApiFallback: true, // For local development
+  }
 });
