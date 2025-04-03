@@ -5,10 +5,25 @@ import { Link } from 'react-router-dom';
 export const Home = () => {
   const [totalIncome, setTotalIncome] = useState<string>('₹0');
 
+  // Function to calculate total income from products
+  const calculateTotalIncome = () => {
+    const products = JSON.parse(localStorage.getItem('products') || '[]');
+    let total = 0;
+    
+    products.forEach((product: any) => {
+      if (product.price && product.sold) {
+        total += product.price * product.sold;
+      }
+    });
+    
+    return total;
+  };
+
   // Function to format and update total income
   const updateTotalIncomeDisplay = () => {
-    const totalIncomeValue = localStorage.getItem('totalIncome') || '0';
-    setTotalIncome(`₹${parseFloat(totalIncomeValue).toFixed(2)}`);
+    const total = calculateTotalIncome();
+    setTotalIncome(`₹${total.toFixed(2)}`);
+    localStorage.setItem('totalIncome', total.toString());
   };
 
   useEffect(() => {
